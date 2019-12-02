@@ -1,6 +1,6 @@
 # Constrained R-CNN： A general image manipulation detection model
 The official repo for the paper "Constrained R-CNN Learning Rich Features for Image Manipulation Detection" 
-#Overview
+# Overview
 **Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
 as input, and predicts manipulation techniques class and pixel-level manipulation 
 localization simultaneously. Compared with state-of-the-art methods, Constrained R-CNN achieves
@@ -64,19 +64,19 @@ For more details, see:
 # Directory
 ```.
 ├── cfgs                                                            
-├── data                                                                     # Model Weights
-│   ├── CASIA_weights                                                        # Trained on CASIA-2 dataset
-│   ├── COVER_weights                                                        # Trained on Coverage dataset
-│   ├── imagenet_weights                                                     # Imagenet weights(ResNet-101)
-│   ├── ini_weights_old                                                      # Trained on COCO Synthetic dataset
-│   └── NIST_weights                                                         # Trained on NIST16 dataset
-├── Data_preprocessing                                                       # Data pre-process script
-├── dataset                                                                  # Dateset directory
+├── data                                             # Model Weights
+│   ├── CASIA_weights                                # Trained on CASIA-2 dataset
+│   ├── COVER_weights                                # Trained on Coverage dataset
+│   ├── imagenet_weights                             # Imagenet weights(ResNet-101)
+│   ├── ini_weights_old                              # Trained on COCO Synthetic dataset
+│   └── NIST_weights                                 # Trained on NIST16 dataset
+├── Data_preprocessing                               # Data pre-process script
+├── dataset                                          # Dateset directory
 │   ├── CASIA
 │   ├── Columbia
 │   ├── COVER_DATASET
 │   └── NIST2016
-├── lib                                                                      # Model
+├── lib                                              # Model
 ├── test_image
 ├── tools
 │   ├── demo.py
@@ -85,9 +85,9 @@ For more details, see:
 ├── train_faster_rcnn.sh
 ├── requirements.txt
 ├── test_faster_rcnn.sh
-├── Demo.ipynb                                                               # Demo
+├── Demo.ipynb                                       # Demo
 ```
-#Model weights
+# Model weights
 We provide model weights trained on multiple dataset. You can download here, and put them into "data" folder as shown in directory tree.
 # Data Pre-processing
 Constrained R-CNN needs manipulation techniques class , bounding box coordinates and ground truth mask for training. We extract
@@ -111,15 +111,15 @@ NIST_preprocess.ipynb
 ```
 
   
-#Demo
+# Demo
 If you only want to test Constrained R-CNN simply, please download the repo and play 
 with the provided ipython notebook.
 ```
 Demo.ipynb
 ```
-#Train
+# Train
 If you want to retrain the Constrained R-CNN, please follow this process:<br>
-##Pre-trained model (Only Stage-1)
+## Pre-trained model (Only Stage-1)
  We also provide the pre-trained weight(Only Stage-1) in `/data/ini_weight_old/`.<br><br>
  1.Download COCO synthetic dataset (https://github.com/pengzhou1108/RGB-N)<br>
  2.Change the coco synthetic path in `lib/datasets/factory.py`:
@@ -150,7 +150,7 @@ for split in ['coco_train_filter_single', 'coco_test_filter_single']:
 ```
 ./test_faster_rcnn.sh 0 coco res101_cbam EXP_DIR coco_flip_cbam
 ```
-##Trained on Standard Datasets (Entire model)
+## Trained on Standard Datasets (Entire model)
 The weights we have completed for training are stored in `data`. 
 If you want to retrain Constrained R-CNN, please follow the process:
 1. Data pre-process as before mentioned.
@@ -161,7 +161,7 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
     name = split
     __sets[name] = (lambda split=split: nist(split,2007,nist_path))
 ```
- 3.Specify the pre-trained model path in `train_faster_rcnn.sh` as below:
+3.Specify the pre-trained model path in `train_faster_rcnn.sh` as below:
 
 ```
         python3 ./tools/trainval_net.py \
@@ -173,7 +173,7 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
             --net ${NET} \
             --set ANCHOR_SCALES ${ANCHORS} ANCHOR_RATIOS ${RATIOS} TRAIN.STEPSIZE ${STEPSIZE} ${EXTRA_ARGS}
 ```
- 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
+4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
 ```
 ./train_faster_rcnn.sh 0 nist res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
 ```

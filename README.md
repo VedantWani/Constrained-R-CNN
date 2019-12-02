@@ -1,6 +1,18 @@
-<<<<<<< HEAD
-# RGB-N
-Code and synthetic dataset generation for the CVPR 2018 paper "Learning Rich Features for Image Manipulation Detection" 
+# Constrained R-CNN： A general image manipulation detection model
+The official repo for the paper "Constrained R-CNN Learning Rich Features for Image Manipulation Detection" 
+#Overview
+**Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
+as input, and predicts manipulation techniques class and pixel-level manipulation 
+localization simultaneously. Compared with state-of-the-art methods, Constrained R-CNN achieves
+better performance in both manipulation classification and localization. Constrained R-CNN has the 
+following advantages/characteristics:
+
+1. **Learnable:** Constrained R-CNN is not utilized any hand-drafted or predetermined features, such as SRM filter, 
+frequency domain characteristics, etc.
+2. **Integrity:** Constrained R-CNN performs both manipulation classification and localization, two goals of image forensics
+in the real world.
+3. **General** Constrianed R-CNN can detect multiple manipulation techniques, including splice, copy-move, and removal.
+4. **Accuracy** Constrianed R-CNN exhibits significant improvements for manipulation localization on multiple datasets.
 
 # Environment
 tensorflow 0.12.1, python3.5.2, cuda 8.0.44 cudnn 5.1

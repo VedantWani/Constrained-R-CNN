@@ -1,6 +1,6 @@
 # Constrained R-CNN： A general image manipulation detection model
 The official repo for the paper "Constrained R-CNN Learning Rich Features for Image Manipulation Detection" 
-# Overview
+#Overview
 **Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
 as input, and predicts manipulation techniques class and pixel-level manipulation 
 localization simultaneously. Compared with state-of-the-art methods, Constrained R-CNN achieves
@@ -64,19 +64,19 @@ For more details, see:
 # Directory
 ```.
 ├── cfgs                                                            
-├── data                                                 # Model Weights
-│   ├── CASIA_weights                                    # Trained on CASIA-2 dataset
-│   ├── COVER_weights                                    # Trained on Coverage dataset
-│   ├── imagenet_weights                                 # Imagenet weights(ResNet-101)
-│   ├── ini_weights_old                                  # Trained on COCO Synthetic dataset
-│   └── NIST_weights                                     # Trained on NIST16 dataset
-├── Data_preprocessing                                   # Data pre-process script
-├── dataset                                              # Dateset directory
+├── data                                                                     # Model Weights
+│   ├── CASIA_weights                                                        # Trained on CASIA-2 dataset
+│   ├── COVER_weights                                                        # Trained on Coverage dataset
+│   ├── imagenet_weights                                                     # Imagenet weights(ResNet-101)
+│   ├── ini_weights_old                                                      # Trained on COCO Synthetic dataset
+│   └── NIST_weights                                                         # Trained on NIST16 dataset
+├── Data_preprocessing                                                       # Data pre-process script
+├── dataset                                                                  # Dateset directory
 │   ├── CASIA
 │   ├── Columbia
 │   ├── COVER_DATASET
 │   └── NIST2016
-├── lib                                                  # Model
+├── lib                                                                      # Model
 ├── test_image
 ├── tools
 │   ├── demo.py
@@ -85,7 +85,7 @@ For more details, see:
 ├── train_faster_rcnn.sh
 ├── requirements.txt
 ├── test_faster_rcnn.sh
-├── Demo.ipynb                                           # Demo
+├── Demo.ipynb                                                               # Demo
 ```
 #Model weights
 We provide model weights trained on multiple dataset. You can download here, and put them into "data" folder as shown in directory tree.

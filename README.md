@@ -14,49 +14,127 @@ in the real world.
 3. **General** Constrianed R-CNN can detect multiple manipulation techniques, including splice, copy-move, and removal.
 4. **Accuracy** Constrianed R-CNN exhibits significant improvements for manipulation localization on multiple datasets.
 
-# Environment
-tensorflow 0.12.1, python3.5.2, cuda 8.0.44 cudnn 5.1
 
-Other packages please run:
+Constrained R-CNN mainly contains three parts as shown in following figure:
+
+![Constrained R-CNN](https://github.com/HuizhouLi/Constrained-R-CNN/blob/master/tools/architecture.png)
+1. **Learnable Manipulation Feature Extractor (LMFE)** The learnable manipulation feature extractor (LMFE) utilizes a constrained convolutional layer to 
+adaptively capture feature manipulation clues ,and then the ResNet-101 learns a unified feature representation of 
+multiple manipulation techniques. 
+
+
+2. **Coarse Manipulation Detection (Stage-1)** In Stage-1, the attention region proposal network effectively discriminates
+ manipulated regions. The prediction module performs the manipulation classification and coarse localization on bounding box level.
+ 
+ 
+3. **Fine Manipulation Detection (Stage-2)** In Stag-2, the skip structure fuses low-level and high-level information to
+ refine the global manipulation features. Finally, the coarse localization information guides the model to further learn
+  the finer local features and segment out the tampered region.
+
+
+
+
+# Dependencies
+Constrained R-CNN is written in Tensorflow. Some packages need to be installed.
+  
+  - Python  3.6.7, 
+  
+  - CUDA   8.0.44 
+  
+  - CUDNN  5.1
+
+Other packages please run requirements.txt:
 ```
 pip install -r requirements.txt
 ```
 
-# Compile lib and compact_bilinear_pooling:
-1. Check if the cuda lib path in `compact_bilinear_pooling/sequential_fft/complie.sh` is correct.
-
-2. Run the command:
+# Installation:
+Build the Cython modules, run the command:
 ```
 cd lib
+make clean
 make
-cd compact_bilinear_pooling/sequential_fft
-./compile.sh
+cd ..
 ```
 
-For more detail, see https://github.com/ronghanghu/tensorflow_compact_bilinear_pooling
+For more details, see:
+ - Faster R-CNN: https://github.com/endernewton/tf-faster-rcnn/
+ - RGB-N: https://github.com/pengzhou1108/RGB-N
 
+# Directory
+```.
+├── cfgs                                                            
+├── data                                                                     # Model Weights
+│   ├── CASIA_weights                                                        # Trained on CASIA-2 dataset
+│   ├── COVER_weights                                                        # Trained on Coverage dataset
+│   ├── imagenet_weights                                                     # Imagenet weights(ResNet-101)
+│   ├── ini_weights_old                                                      # Trained on COCO Synthetic dataset
+│   └── NIST_weights                                                         # Trained on NIST16 dataset
+├── Data_preprocessing                                                       # Data pre-process script
+├── dataset                                                                  # Dateset directory
+│   ├── CASIA
+│   ├── Columbia
+│   ├── COVER_DATASET
+│   └── NIST2016
+├── lib                                                                      # Model
+├── test_image
+├── tools
+│   ├── demo.py
+│   ├── test_net.py
+│   └── trainval_net.py
+├── train_faster_rcnn.sh
+├── requirements.txt
+├── test_faster_rcnn.sh
+├── Demo.ipynb                                                               # Demo
+```
+#Model weights
+We provide model weights trained on multiple dataset. You can download here, and put them into "data" folder as shown in directory tree.
+# Data Pre-processing
+Constrained R-CNN needs manipulation techniques class , bounding box coordinates and ground truth mask for training. We extract
+the bounding box from the ground truth mask. For different datasets, the pre-processing is slightly different:<br>
 
-# Pre-trained model
-For ImageNet resnet101 pre-trained model, please download from https://github.com/endernewton/tf-faster-rcnn
+ 
+  Dateset | Class Label |GT Mask  | Pre-process  |
+  :--- |:---:|:---:|---|
+  |CASIA|Authentic, Tamper|N | 1. Generate groundtruth mask<br>2. Extract bounding box<br>3. Split training and testing set|
+  |COVER|Authentic, Tamper|Y |1. Extract bounding box from mask<br>2. Split training and testing set|
+  |Columbia|Authentic, Tamper|Y |1. Extract bounding box from mask<br>2. All images for testing|
+  |NIST2016|Splice, Copy-move, Removal|Y|1. Extract bounding box from mask<br>2. Split training and testing set|
+  
+For more details, please see the scripts in the `Data preprocessing` folder:
 
-# Synthetic dataset 
-1. Download COCO 2014 dataset (http://cocodataset.org/#download) and COCO PythonAPI (https://github.com/cocodataset/cocoapi) and put in `coco_synthetic` folder. After this step the coco dataset folder 'cocostuff' will be created.
-2. Change `dataDir` in `coco_synthetic/demo.py` to the path of 'train2014' (e.g, `./cocostuff/coco/train2014`)
-3. Run `run_demo.sh 1 100` to choose the begin and end COCO category used for creating the tamper synthetic dataset.
-4. Run `split_train_test.py` to make train/test split. (making sure that the images used to generate training set not overlap with the images for testing)
+```
+CAISA1_preprocess.ipynb
+Columbia_preprocess.ipynb
+COVER_preprocess.ipynb
+NIST_preprocess.ipynb
+```
 
-# Train on synthetic dataset
-1. Change the coco synthetic path in `lib/factory.py`:
+  
+#Demo
+If you only want to test Constrained R-CNN simply, please download the repo and play 
+with the provided ipython notebook.
+```
+Demo.ipynb
+```
+#Train
+If you want to retrain the Constrained R-CNN, please follow this process:<br>
+##Pre-trained model (Only Stage-1)
+ We also provide the pre-trained weight(Only Stage-1) in `/data/ini_weight_old/`.<br><br>
+ 1.Download COCO synthetic dataset (https://github.com/pengzhou1108/RGB-N)<br>
+ 2.Change the coco synthetic path in `lib/datasets/factory.py`:
 ```
 coco_path= #FIXME
 for split in ['coco_train_filter_single', 'coco_test_filter_single']:
     name = split
     __sets[name] = (lambda split=split: coco(split,2007,coco_path))
 ```
-2. Specify the ImageNet resnet101 pretrain model path in `train_faster_rcnn.sh` as below:
+
+ 3.Specify the ImageNet resnet101 model path in `train_faster_rcnn.sh` as below:
+
 ```
         python3 ./tools/trainval_net.py \
-            --weight /path of res101.ckpt/data/imagenet_weights/res101.ckpt \ #FIXME
+            --weight ./imagenet_weights/res101.ckpt \ #ImageNet resnet101 model path
             --imdb ${TRAIN_IMDB} \
             --imdbval ${TEST_IMDB} \
             --iters ${ITERS} \
@@ -64,16 +142,30 @@ for split in ['coco_train_filter_single', 'coco_test_filter_single']:
             --net ${NET} \
             --set ANCHOR_SCALES ${ANCHORS} ANCHOR_RATIOS ${RATIOS} TRAIN.STEPSIZE ${STEPSIZE} ${EXTRA_ARGS}
 ```
-3. Specify the dataset, gpu, and network in `train_dist_faster.sh` as below as run the file
+ 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
 ```
-./train_faster_rcnn.sh 0 coco res101_fusion EXP_DIR coco_flip_0001_bilinear_new
+./train_faster_rcnn.sh 0 coco res101_cbam EXP_DIR coco_flip_cbam
 ```
+ 5.Testing pre-trained model
+```
+./test_faster_rcnn.sh 0 coco res101_cbam EXP_DIR coco_flip_cbam
+```
+##Trained on Standard Datasets (Entire model)
+The weights we have completed for training are stored in `data`. 
+If you want to retrain Constrained R-CNN, please follow the process:
+1. Data pre-process as before mentioned.
+2. Change the dataset path in `lib/datasets/factory.py`, such as:
+```
+nist_path='../dataset/NIST2016'    #dataset path
+for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
+    name = split
+    __sets[name] = (lambda split=split: nist(split,2007,nist_path))
+```
+ 3.Specify the pre-trained model path in `train_faster_rcnn.sh` as below:
 
-# Use synthetic pre-trained model for fine tuning
-1. Specify the ImageNet resnet101 pretrain model path in `train_faster_rcnn.sh` as below:
 ```
         python3 ./tools/trainval_net.py \
-            --weight /path of synthetic pretrain model/res101_fusion_faster_rcnn_iter_60000.ckpt \ #FIXME
+            --weight ./ini_weights_old/res101_cbam_faster_rcnn_iter_110000.ckpt \ #COCO synthetic dataset pre-trained model path
             --imdb ${TRAIN_IMDB} \
             --imdbval ${TEST_IMDB} \
             --iters ${ITERS} \
@@ -81,39 +173,22 @@ for split in ['coco_train_filter_single', 'coco_test_filter_single']:
             --net ${NET} \
             --set ANCHOR_SCALES ${ANCHORS} ANCHOR_RATIOS ${RATIOS} TRAIN.STEPSIZE ${STEPSIZE} ${EXTRA_ARGS}
 ```
-
-2. Specify the dataset, gpu, and network in `train_dist_faster.sh` as below as run the file (use NIST as an example)
+ 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
 ```
-./train_faster_rcnn.sh 0 NIST res101_fusion EXP_DIR NIST_flip_0001_bilinear_new
+./train_faster_rcnn.sh 0 nist res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
 ```
 
 # Test the model
 1. Check the model path match well with `NET_FINAL` in `test_faster_rcnn.sh`, making sure the checkpoint iteration exist in model output path. Otherwise, change the iteration number `ITERS` as needed.
 ```
-  coco)
-    TRAIN_IMDB="coco_train_filter_single"
-    TEST_IMDB="coco_test_filter_single"
+  NIST)
+    TRAIN_IMDB="dist_NIST_train_new_2"
+    TEST_IMDB="dist_NIST_test_new_2"
     ITERS=60000
     ANCHORS="[8,16,32,64]"
     RATIOS="[0.5,1,2]"
     ;;
 ```
 
-2. Run `test_dist_faster.sh`. If things go correcty, it should print out `MAP` and save `tamper.txt` and `tamper.png` indicating the detection result and PR curve.
+2. Run `test_dist_faster.sh`. If things go correcty, it should print out `F1 score` and `AUC` indicating the detection result.
 
-# Synthetic dataset and training/testing split
-https://drive.google.com/open?id=1vIAFsftjmHg2J5lJgO92C1Xmyw539p_B
-
-# Citation:
-If this code or dataset helps your research, please cite our paper:
-```
-@inproceedings{zhou2018learning,
-  title={Learning Rich Features for Image Manipulation Detection},
-  author={Zhou, Peng and Han, Xintong and Morariu, Vlad I and Davis, Larry S},
-  booktitle = {CVPR},
-  year={2018}
-}
-```
-=======
-# Image_forensics
->>>>>>> d4848a174984c686b6347427df56b54e4257825d

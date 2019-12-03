@@ -11,8 +11,8 @@ following advantages/characteristics:
 frequency domain characteristics, etc.
 2. **Integrity:** Constrained R-CNN performs both manipulation classification and localization, two goals of image forensics
 in the real world.
-3. **General** Constrianed R-CNN can detect multiple manipulation techniques, including splice, copy-move, and removal.
-4. **Accuracy** Constrianed R-CNN exhibits significant improvements for manipulation localization on multiple datasets.
+3. **General:** Constrianed R-CNN can detect multiple manipulation techniques, including splice, copy-move, and removal.
+4. **Accuracy:** Constrianed R-CNN exhibits significant improvements for manipulation localization on multiple datasets.
 
 
 Constrained R-CNN mainly contains three parts as shown in following figure:

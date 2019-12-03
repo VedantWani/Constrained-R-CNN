@@ -1,5 +1,5 @@
-# Constrained R-CNN： A general image manipulation detection model
-The official repo for the paper "Constrained R-CNN Learning Rich Features for Image Manipulation Detection" 
+# Constrained R-CNN
+The official repo for the paper **"Constrained R-CNN： A general image manipulation detection model"**
 # Overview
 **Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
 as input, and predicts manipulation techniques classes and pixel-level manipulation 

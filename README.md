@@ -2,7 +2,7 @@
 The official repo for the paper "Constrained R-CNN Learning Rich Features for Image Manipulation Detection" 
 # Overview
 **Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
-as input, and predicts manipulation techniques class and pixel-level manipulation 
+as input, and predicts manipulation techniques classes and pixel-level manipulation 
 localization simultaneously. Compared with state-of-the-art methods, Constrained R-CNN achieves
 better performance in both manipulation classification and localization. Constrained R-CNN has the 
 following advantages/characteristics:
@@ -65,11 +65,11 @@ For more details, see:
 ```.
 ├── cfgs                                                            
 ├── data                                             # Model Weights
-│   ├── CASIA_weights                                # Trained on CASIA-2 dataset
-│   ├── COVER_weights                                # Trained on Coverage dataset
+│   ├── CASIA_weights                                # Training on CASIA-2 dataset
+│   ├── COVER_weights                                # Training on Coverage dataset
 │   ├── imagenet_weights                             # Imagenet weights(ResNet-101)
-│   ├── ini_weights_old                              # Trained on COCO Synthetic dataset
-│   └── NIST_weights                                 # Trained on NIST16 dataset
+│   ├── ini_weights_old                              # Training on COCO Synthetic dataset
+│   └── NIST_weights                                 # Training on NIST16 dataset
 ├── Data_preprocessing                               # Data pre-process script
 ├── dataset                                          # Dateset directory
 │   ├── CASIA
@@ -88,9 +88,9 @@ For more details, see:
 ├── Demo.ipynb                                       # Demo
 ```
 # Model weights
-We provide model weights trained on multiple dataset. You can download here, and put them into "data" folder as shown in directory tree.
+We provide model weights trained on multiple datasets. You can download [here](https://drive.google.com/open?id=1tR11gGSpKXuWOzUfg9qb3VtcX1BGdLdC), and put them into `data` folder as shown in directory tree.
 # Data Pre-processing
-Constrained R-CNN needs manipulation techniques class , bounding box coordinates and ground truth mask for training. We extract
+Constrained R-CNN needs manipulation techniques classes , bounding box coordinates and ground truth mask for training. We extract
 the bounding box from the ground truth mask. For different datasets, the pre-processing is slightly different:<br>
 
  
@@ -120,7 +120,8 @@ Demo.ipynb
 # Train
 If you want to retrain the Constrained R-CNN, please follow this process:<br>
 ## Pre-trained model (Only Stage-1)
- We also provide the pre-trained weight(Only Stage-1) in `/data/ini_weight_old/`.<br><br>
+ The pre-training process is similar to [RGB-N](https://github.com/pengzhou1108/RGB-N).<br>
+ We also provide the pre-trained model weights (Only Stage-1) in `/data/ini_weight_old/`.<br><br>
  1.Download COCO synthetic dataset (https://github.com/pengzhou1108/RGB-N)<br>
  2.Change the coco synthetic path in `lib/datasets/factory.py`:
 ```
@@ -130,7 +131,7 @@ for split in ['coco_train_filter_single', 'coco_test_filter_single']:
     __sets[name] = (lambda split=split: coco(split,2007,coco_path))
 ```
 
- 3.Specify the ImageNet resnet101 model path in `train_faster_rcnn.sh` as below:
+ 3.Specify the ImageNet resnet101 model path in `train_faster_rcnn.sh` :
 
 ```
         python3 ./tools/trainval_net.py \
@@ -142,16 +143,32 @@ for split in ['coco_train_filter_single', 'coco_test_filter_single']:
             --net ${NET} \
             --set ANCHOR_SCALES ${ANCHORS} ANCHOR_RATIOS ${RATIOS} TRAIN.STEPSIZE ${STEPSIZE} ${EXTRA_ARGS}
 ```
- 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
+ 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` and run the file:
 ```
 ./train_faster_rcnn.sh 0 coco res101_cbam EXP_DIR coco_flip_cbam
 ```
- 5.Testing pre-trained model
+
+ 5.Test pre-trained model
+ 
+ 
+ Check the model path match well with `NET_FINAL` in `test_faster_rcnn.sh`, 
+ making sure the checkpoint iteration `ITERS` exist in model output path. Otherwise, change it as you needed.
+```
+  coco)
+    TRAIN_IMDB="coco_train_filter_single"
+    TEST_IMDB="coco_test_filter_single"
+    ITERS=60000
+    ANCHORS="[8,16,32,64]"
+    RATIOS="[0.5,1,2]"
+    ;;
+```
+Run `test_faster_rcnn.sh`. If things go correcty, it should print out `MAP` and save `tamper.txt` and `tamper.png` 
+indicating the detection result and PR curve.
 ```
 ./test_faster_rcnn.sh 0 coco res101_cbam EXP_DIR coco_flip_cbam
 ```
-## Trained on Standard Datasets (Entire model)
-The weights we have completed for training are stored in `data`. 
+## Training on Standard Datasets (Entire model)
+The weights we have trained are stored in `data`. 
 If you want to retrain Constrained R-CNN, please follow the process:
 1. Data pre-process as before mentioned.
 2. Change the dataset path in `lib/datasets/factory.py`, such as:
@@ -161,7 +178,7 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
     name = split
     __sets[name] = (lambda split=split: nist(split,2007,nist_path))
 ```
-3.Specify the pre-trained model path in `train_faster_rcnn.sh` as below:
+3.Specify the pre-trained model path in `train_faster_rcnn.sh`:
 
 ```
         python3 ./tools/trainval_net.py \
@@ -175,11 +192,12 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
 ```
 4.Specify the dataset, gpu, and network in `train_faster_rcnn.sh` as below as run the file
 ```
-./train_faster_rcnn.sh 0 nist res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
+./train_faster_rcnn.sh 0 NIST res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
 ```
 
-# Test the model
-1. Check the model path match well with `NET_FINAL` in `test_faster_rcnn.sh`, making sure the checkpoint iteration exist in model output path. Otherwise, change the iteration number `ITERS` as needed.
+# Test
+1. Check the model path match well with `NET_FINAL` in `test_faster_rcnn.sh`, 
+ making sure the checkpoint iteration `ITERS` exist in model output path. Otherwise, change it as you needed.
 ```
   NIST)
     TRAIN_IMDB="dist_NIST_train_new_2"
@@ -190,5 +208,7 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
     ;;
 ```
 
-2. Run `test_dist_faster.sh`. If things go correcty, it should print out `F1 score` and `AUC` indicating the detection result.
-
+2. Run `test_faster_rcnn.sh`. If things go correcty, it should print out `F1 score` and `AUC` indicating the detection result.
+```
+./test_faster_rcnn.sh 0 NIST res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
+```

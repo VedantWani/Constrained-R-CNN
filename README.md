@@ -214,7 +214,7 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
 ```
 ./test_faster_rcnn.sh 0 NIST res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
 ```
-#Citation
+# Citation
 If this model is helpful for your research, please cite our paper:
 ```
 @inproceedings{inproceedings,

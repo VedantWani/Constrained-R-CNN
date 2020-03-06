@@ -220,7 +220,7 @@ If this model is helpful for your research, please cite our paper:
 @inproceedings{inproceedings,
   title = {Constrained R-CNN: A general image manipulation detection model},
   author = {Yang, Chao and Li, Huizhou and Lin, Fangting and Jiang, Bin and Zhao, Hao},
-  booktitle = {ICME2020},
-  year = {2019},
+  booktitle = {ICME},
+  year = {2020},
 }
 ```

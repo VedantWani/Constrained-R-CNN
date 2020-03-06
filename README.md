@@ -1,4 +1,6 @@
 # Constrained R-CNN
+![ICME2020](https://github.com/HuizhouLi/Constrained-R-CNN/blob/master/tools/ICME2020.gif)
+
 The official repo for the paper **"Constrained R-CNN： A general image manipulation detection model"**
 # Overview
 **Constrained R-CNN** is an end-to-end image manipulation detection model, which takes a manipulated image
@@ -211,4 +213,14 @@ for split in ['dist_NIST_train_new_2', 'dist_NIST_test_new_2']:
 2. Run `test_faster_rcnn.sh`. If things go correcty, it should print out `F1 score` and `AUC` indicating the detection result.
 ```
 ./test_faster_rcnn.sh 0 NIST res101_C3-R-cbam EXP_DIR NIST_flip_C3RCBAM
+```
+#Citation
+If this model is helpful for your research, please cite our paper:
+```
+@inproceedings{inproceedings,
+  title = {Constrained R-CNN: A general image manipulation detection model},
+  author = {Yang, Chao and Li, Huizhou and Lin, Fangting and Jiang, Bin and Zhao, Hao},
+  booktitle = {ICME2020},
+  year = {2019},
+}
 ```
